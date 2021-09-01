@@ -1,40 +1,36 @@
 {
   "name": "semantic-release-jira-releases",
-  "version": "0.7.2",
+  "version": "0.1.0",
   "main": "dist/lib/index.js",
-  "repository": "https://github.com/UpHabit/semantic-release-jira-releases",
+  "repository": "https://github.com/boxcee/semantic-release-jira-releases",
   "license": "MIT",
   "private": false,
   "scripts": {
     "prepublishOnly": "mkdir -p dist && rm -rf dist && tsc -p .",
     "lint": "tslint -p .",
     "build": "tsc -p .",
-    "test": " yarn jest"
+    "test": "npx jest"
   },
   "dependencies": {
     "@semantic-release/error": "^2.2.0",
-    "@types/request": "^2.48.4",
+    "@types/request": "^2.48.7",
     "jira-connector": "^3.1.0",
-    "lodash": "^4.17.19",
-    "p-limit": "^2.2.2",
-    "tslib": "^1.11.1"
+    "jira.js": "^2.6.0",
+    "lodash": "^4.17.21",
+    "p-limit": "^4.0.0",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.10.4",
-    "@babel/preset-typescript": "^7.10.4",
-    "@types/jest": "^26.0.5",
-    "@types/lodash": "^4.14.149",
-    "@types/node": "^13.9.5",
-    "@types/signale": "^1.4.0",
-    "jest": "^26.1.0",
-    "madge": "^3.8.0",
-    "tslint": "^6.1.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^27.0.1",
+    "@types/lodash": "^4.14.172",
+    "@types/node": "^16.7.10",
+    "@types/signale": "^1.4.2",
+    "jest": "^27.1.0",
+    "madge": "^5.0.1",
+    "tslint": "^5.20.1",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.8.3"
-  },
-  "resolutions": {
-    "**/gonzales-pe/minimist": "^1.2.5",
-    "typescript": "^3.8.3",
-    "**/typescript": "^3.8.3"
+    "typescript": "^4.4.2"
   }
 }
