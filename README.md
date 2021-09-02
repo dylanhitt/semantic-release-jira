@@ -4,7 +4,7 @@
 
 ![Github](https://github.com/boxcee/semantic-release-jira/actions/workflows/release.yml/badge.svg)
 
-[![npm latest version](https://img.shields.io/npm/v/temptek/semantic-release-jira/latest.svg)](https://www.npmjs.com/package/temptek/semantic-release-jira)
+[![npm latest version](https://img.shields.io/npm/v/@temptek/semantic-release-jira/latest.svg)](https://www.npmjs.com/package/temptek/semantic-release-jira)
 
 | Step               | Description                                                                                                                                   |
 |--------------------|----------------------------------------------------------------------------|
