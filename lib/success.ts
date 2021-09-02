@@ -33,7 +33,7 @@ export function getTickets(config: PluginConfig, context: GenerateNotesContext):
 }
 
 async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, project: Version3.Version3Models.Project, name: string, description: string): Promise<Version3.Version3Models.Version> {
-  const remoteVersions = await project.versions;
+  const remoteVersions = project.versions;
   context.logger.info(`Looking for version with name '${name}'`);
   const existing = _.find(remoteVersions, { name });
   if (existing) {
@@ -79,7 +79,7 @@ async function editIssueFixVersions(config: PluginConfig, context: GenerateNotes
         properties: undefined as any,
       });
     }
-  } catch (err) {
+  } catch (err: any) {
     const allowedStatusCodes = [400, 404];
     let { statusCode } = err;
     if (typeof err === 'string') {

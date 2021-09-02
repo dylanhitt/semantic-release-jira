@@ -52,9 +52,19 @@ export async function verifyConditions(config: PluginConfig, context: PluginCont
     throw new SemanticReleaseError(`config.networkConcurrency must be an number greater than 0`);
   }
 
-  if (!context.env.JIRA_AUTH) {
-    throw new SemanticReleaseError(`JIRA_AUTH must be a string`);
+  if (!context.env.JIRA_USERNAME && !context.env.JIRA_PASSWORD && !context.env.JIRA_EMAIL && !context.env.JIRA_API_TOKEN && !context.env.JIRA_AUTH) {
+    throw new SemanticReleaseError(`Either JIRA_USERNAME and JIRA_PASSWORD or JIRA_EMAIL and JIRA_API_TOKEN must be set for basic auth`);
   }
+
+  if ((!context.env.JIRA_USERNAME && context.env.JIRA_PASSWORD) || (context.env.JIRA_USERNAME && !context.env.JIRA_PASSWORD)) {
+    throw new SemanticReleaseError(`Both JIRA_USERNAME and JIRA_PASSWORD must be set for basic auth`);
+  }
+
+  if ((!context.env.JIRA_EMAIL && context.env.JIRA_API_TOKEN) || (context.env.JIRA_EMAIL && !context.env.JIRA_API_TOKEN)) {
+    throw new SemanticReleaseError(`Both JIRA_EMAIL and JIRA_API_TOKEN must be set for basic auth`);
+  }
+
   const jira = makeClient(config, context);
-  await jira.project.getProject({ projectIdOrKey: config.projectId });
+
+  await jira.projects.getProject({ projectIdOrKey: config.projectId });
 }

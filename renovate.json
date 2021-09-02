@@ -24,8 +24,8 @@
     }
   ],
   "rangeStrategy": "replace",
-  "timezone": "America/Toronto",
+  "timezone": "Europe/Berlin",
   "rebaseStalePrs": true,
-  "reviewers": ["GabrielCastro"],
+  "reviewers": ["boxcee"],
   "schedule": ["after 9am and before 3pm", "every weekday"]
 }
