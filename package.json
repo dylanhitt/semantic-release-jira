@@ -1,10 +1,10 @@
 {
-  "name": "@temptek/semantic-release-jira-releases",
+  "name": "@temptek/semantic-release-jira",
   "version": "0.0.3",
   "main": "dist/lib/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/boxcee/semantic-release-jira-releases.git"
+    "url": "git+https://github.com/boxcee/semantic-release-jira.git"
   },
   "publishConfig": {
     "access": "public"
@@ -41,9 +41,9 @@
   },
   "description": "[**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to publish a jira release.",
   "bugs": {
-    "url": "https://github.com/boxcee/semantic-release-jira-releases/issues"
+    "url": "https://github.com/boxcee/semantic-release-jira/issues"
   },
-  "homepage": "https://github.com/boxcee/semantic-release-jira-releases#readme",
+  "homepage": "https://github.com/boxcee/semantic-release-jira#readme",
   "directories": {
     "lib": "lib",
     "test": "test"
