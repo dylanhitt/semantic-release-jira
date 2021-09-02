@@ -1,3 +1,10 @@
+# [0.1.0](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.0.4...v0.1.0) (2021-09-02)
+
+
+### Features
+
+* Always release when on release branch, enable use of env variables in release templates ([3d6d1f0](https://github.com/boxcee/semantic-release-jira-releases/commit/3d6d1f0a56b6ea4f84650929821818c5d2b5cd2b))
+
 ## [0.0.4](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.0.3...v0.0.4) (2021-09-02)
 
 
