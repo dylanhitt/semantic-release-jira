@@ -2,7 +2,13 @@
   "name": "@temptek/semantic-release-jira-releases",
   "version": "0.0.1",
   "main": "dist/lib/index.js",
-  "repository": "https://github.com/boxcee/semantic-release-jira-releases",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boxcee/semantic-release-jira-releases.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "private": false,
   "scripts": {
@@ -32,5 +38,15 @@
     "tslint": "^5.20.1",
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^4.4.2"
-  }
+  },
+  "description": "[**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to publish a jira release.",
+  "bugs": {
+    "url": "https://github.com/boxcee/semantic-release-jira-releases/issues"
+  },
+  "homepage": "https://github.com/boxcee/semantic-release-jira-releases#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "author": "Moritz Schmitz von Hülst"
 }
