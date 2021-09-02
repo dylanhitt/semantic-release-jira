@@ -19,6 +19,18 @@ $ npm install --save-dev semantic-release-jira-releases
 $ yarn add --dev semantic-release-jira-releases
 ```
 
+### Environment variables
+
+| Variable                | Description                                                                                                                   |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `NPM_TOKEN`             | Npm token created via [npm token create](https://docs.npmjs.com/getting-started/working_with_tokens#how-to-create-new-tokens) |
+| `NPM_USERNAME`          | Npm username created via [npm adduser](https://docs.npmjs.com/cli/adduser) or on [npmjs.com](https://www.npmjs.com)           |
+| `NPM_PASSWORD`          | Password of the npm user.                                                                                                     |
+| `NPM_EMAIL`             | Email address associated with the npm user                                                                                    |
+| `NPM_CONFIG_USERCONFIG` | Path to non-default .npmrc file                                                                                                 |
+
+Use either `NPM_TOKEN` for token authentication or `NPM_USERNAME`, `NPM_PASSWORD` and `NPM_EMAIL` for legacy authentication
+
 ### Configuration
 The plugin should be added to your config
 ```json
