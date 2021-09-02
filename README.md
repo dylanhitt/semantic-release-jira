@@ -111,11 +111,11 @@ interface Config {
     networkConcurrency?: number;
 
     /**
-     * indicates if a new release created in jira should be set as released
+     * Indicates if a new release created in jira should be set as released. `true` if the branch is not a prerelease
      */
     released?: boolean;
     /**
-     * include the release date when creating a release in jira
+     * Include the release date when creating a release in jira
      */
     setReleaseDate?: boolean;
 }

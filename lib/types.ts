@@ -1,3 +1,4 @@
+import { BranchSpec } from 'semantic-release';
 import { Signale } from 'signale';
 
 export interface PluginContext {
@@ -9,6 +10,7 @@ export interface PluginContext {
   options: BaseConfig;
   stderr: typeof process.stderr;
   stdout: typeof process.stdout;
+  branch: BranchSpec;
 }
 
 export interface Person {

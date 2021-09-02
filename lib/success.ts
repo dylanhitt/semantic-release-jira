@@ -52,13 +52,17 @@ async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesC
     } as any;
   } else {
     const descriptionText = description || '';
-    newVersion = await jira.projectVersions.createVersion({
+    const parameters = {
       name,
       projectId: project.id as any,
       description: descriptionText,
       released: Boolean(config.released),
       releaseDate: config.setReleaseDate ? (new Date().toISOString()) : undefined,
-    });
+    };
+    if (!parameters.released && typeof context.branch !== 'string') {
+      parameters.released = !context.branch.prerelease;
+    }
+    newVersion = await jira.projectVersions.createVersion(parameters);
   }
 
   context.logger.info(`Made new release '${newVersion.id}'`);
@@ -103,10 +107,10 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
   context.logger.info(`Found ticket ${tickets.join(', ')}`);
 
   const versionTemplate = _.template(config.releaseNameTemplate ?? DEFAULT_VERSION_TEMPLATE);
-  const newVersionName = versionTemplate({ version: context.nextRelease.version });
+  const newVersionName = versionTemplate({ version: context.nextRelease.version, env: context.env });
 
   const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE);
-  const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes });
+  const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env });
 
   context.logger.info(`Using jira release '${newVersionName}'`);
 
