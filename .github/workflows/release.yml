@@ -73,7 +73,7 @@ jobs:
       - name: Install
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          npm install \
+          npm install -g \
             semantic-release \
             @semantic-release/changelog \
             @semantic-release/exec \
