@@ -6,7 +6,6 @@
 
 [![npm latest version](https://img.shields.io/npm/v/semantic-release-jira-releases/latest.svg)](https://www.npmjs.com/package/semantic-release-jira-releases)
 
-
 | Step               | Description                                                                                                                                   |
 |--------------------|----------------------------------------------------------------------------|
 | `verifyConditions` | Validate the config options and check for a `JIRA_AUTH` in the environment |
@@ -21,95 +20,104 @@ $ yarn add --dev semantic-release-jira-releases
 
 ### Environment variables
 
-| Variable                | Description                                                                                                                   |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `NPM_TOKEN`             | Npm token created via [npm token create](https://docs.npmjs.com/getting-started/working_with_tokens#how-to-create-new-tokens) |
-| `NPM_USERNAME`          | Npm username created via [npm adduser](https://docs.npmjs.com/cli/adduser) or on [npmjs.com](https://www.npmjs.com)           |
-| `NPM_PASSWORD`          | Password of the npm user.                                                                                                     |
-| `NPM_EMAIL`             | Email address associated with the npm user                                                                                    |
-| `NPM_CONFIG_USERCONFIG` | Path to non-default .npmrc file                                                                                                 |
+| Variable                | Description                                                                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `JIRA_AUTH`             | Base64 encoded string of `username:password`.                                                                                                                             |
+| `JIRA_USERNAME`         | Username in Jira. Used for basic auth.                                                                                                                                    |
+| `JIRA_PASSWORD`         | Password in Jira. Used for basic auth.                                                                                                                                    |
+| `JIRA_EMAIL`            | Email address in Jira. Used for basic auth.                                                                                                                               |
+| `JIRA_API_TOKEN`        | Api token in Jira. Used for basic auth. [How to create an api token?](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/) |          
 
-Use either `NPM_TOKEN` for token authentication or `NPM_USERNAME`, `NPM_PASSWORD` and `NPM_EMAIL` for legacy authentication
+Use either `JIRA_AUTH`, `JIRA_USERNAME` and `JIRA_PASSWORD` **or** `JIRA_EMAIL` and `JIRA_API_TOKEN`.
 
 ### Configuration
+
 The plugin should be added to your config
+
 ```json
 {
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/git",
-    ["semantic-release-jira-releases", {
-      "projectId": "UH",
-      "releaseNameTemplate": "Test v${version}",
-      "jiraHost": "uphabit.atlassian.net",
-      "ticketPrefixes": [ "TEST", "UH"],
-      "ticketRegex": "[a-zA-Z]{3,5}-\\d{3,5}"
-    }]
+    [
+      "semantic-release-jira-releases",
+      {
+        "projectId": "UH",
+        "releaseNameTemplate": "Test v${version}",
+        "jiraHost": "uphabit.atlassian.net",
+        "ticketPrefixes": [
+          "TEST",
+          "UH"
+        ],
+        "ticketRegex": "[a-zA-Z]{3,5}-\\d{3,5}"
+      }
+    ]
   ]
 }
 
 Please note that `ticketRegex` cannot be used together with `ticketPrefixes`.
 ```
+
 ```typescript
 interface Config {
-  /**
-   * A domain of a jira instance ie: `uphabit.atlasian.net`
-   */
-  jiraHost: string;
+    /**
+     * A domain of a jira instance ie: `uphabit.atlasian.net`
+     */
+    jiraHost: string;
 
-  /**
-   * A list of prefixes to match when looking for tickets in commits. Cannot be used together with ticketRegex.
-   *
-   * ie. ['TEST'] would match `TEST-123` and `TEST-456`
-   */
-  ticketPrefixes?: string[];
+    /**
+     * A list of prefixes to match when looking for tickets in commits. Cannot be used together with ticketRegex.
+     *
+     * ie. ['TEST'] would match `TEST-123` and `TEST-456`
+     */
+    ticketPrefixes?: string[];
 
-  /**
-   * A unescaped regex to match tickets in commits (without slashes). Cannot be used together with ticketPrefixes.
-   *
-   * ie. [a-zA-Z]{4}-\d{3,5} would match any ticket with 3 letters a dash and 3 to 5 numbers, such as `TEST-456`, `TEST-5643` and `TEST-56432`
-   */
-  ticketRegex?: string;
+    /**
+     * A unescaped regex to match tickets in commits (without slashes). Cannot be used together with ticketPrefixes.
+     *
+     * ie. [a-zA-Z]{4}-\d{3,5} would match any ticket with 3 letters a dash and 3 to 5 numbers, such as `TEST-456`, `TEST-5643` and `TEST-56432`
+     */
+    ticketRegex?: string;
 
-  /**
-   * The id or key for the project releases will be created in
-   */
-  projectId: string;
+    /**
+     * The id or key for the project releases will be created in
+     */
+    projectId: string;
 
-  /**
-   * A lodash template with a single `version` variable
-   * defaults to `v${version}` which results in a version that is named like `v1.0.0`
-   * ex: `Semantic Release v${version}` results in `Semantic Release v1.0.0`
-   *
-   * @default `v${version}`
-   */
-  releaseNameTemplate?: string;
+    /**
+     * A lodash template with a single `version` variable
+     * defaults to `v${version}` which results in a version that is named like `v1.0.0`
+     * ex: `Semantic Release v${version}` results in `Semantic Release v1.0.0`
+     *
+     * @default `v${version}`
+     */
+    releaseNameTemplate?: string;
 
-  /**
-   * A lodash template for the release.description field
-   *
-   * template variables:
-   *    version: the sem-ver version ex.: 1.2.3
-   *      notes: The full release notes: This may be very large
-   *             Only use it if you have very small releases
-   *
-   * @default `Automated released with semantic-release-jira-releases https://git.io/JvAbj`
-   */
-  releaseDescriptionTemplate?: string;
+    /**
+     * A lodash template for the release.description field
+     *
+     * template variables:
+     *    version: the sem-ver version ex.: 1.2.3
+     *      notes: The full release notes: This may be very large
+     *             Only use it if you have very small releases
+     *
+     * @default `Automated released with semantic-release-jira-releases https://git.io/JvAbj`
+     */
+    releaseDescriptionTemplate?: string;
 
-  /**
-   * The number of maximum parallel network calls, default 10
-   */
-  networkConcurrency?: number;
+    /**
+     * The number of maximum parallel network calls, default 10
+     */
+    networkConcurrency?: number;
 
-  /**
-   * indicates if a new release created in jira should be set as released
-   */
-  released?: boolean;
-  /**
-   * include the release date when creating a release in jira
-   */
-  setReleaseDate?: boolean;
+    /**
+     * indicates if a new release created in jira should be set as released
+     */
+    released?: boolean;
+    /**
+     * include the release date when creating a release in jira
+     */
+    setReleaseDate?: boolean;
 }
 ```
