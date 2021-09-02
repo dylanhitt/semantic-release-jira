@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/boxcee/semantic-release-jira-releases/compare/v1.0.0...v1.0.1) (2021-09-02)
+
+
+### Bug Fixes
+
+* First version ([783d80f](https://github.com/boxcee/semantic-release-jira-releases/commit/783d80f9953e98227dc0cdf5b24755a1b3217596))
+
 # 1.0.0 (2021-09-02)
 
 
