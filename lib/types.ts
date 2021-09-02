@@ -107,16 +107,29 @@ export interface PluginConfig extends BaseConfig {
   releaseDescriptionTemplate?: string;
 
   /**
-   * The number of maximum parallel network calls, default 10
+   * The number of maximum parallel network calls
+   *
+   * @default: 10
    */
   networkConcurrency?: number;
 
   /**
-   * indicates if a new release created in jira should be set as released
+   * Indicates if a new release created in jira should be set as released
    */
   released?: boolean;
+
   /**
-   * include the release date when creating a release in jira
+   * Include the release date when creating a release in jira
+   *
+   * @default: false
    */
   setReleaseDate?: boolean;
+
+  /**
+   * Specify board name to be used to find an active sprint.
+   * Use the start date of the active sprint as start date for the release
+   *
+   * @default: undefined
+   */
+  useBoardForActiveSprint?: string;
 }

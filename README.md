@@ -101,22 +101,35 @@ interface Config {
      *      notes: The full release notes: This may be very large
      *             Only use it if you have very small releases
      *
-     * @default `Automated released with semantic-release-jira-releases https://git.io/JvAbj`
+     * @default `Automated release with semantic-release-jira-releases https://git.io/JvAbj`
      */
     releaseDescriptionTemplate?: string;
 
     /**
-     * The number of maximum parallel network calls, default 10
+     * The number of maximum parallel network calls
+     *
+     * @default: 10
      */
     networkConcurrency?: number;
 
     /**
-     * Indicates if a new release created in jira should be set as released. `true` if the branch is not a prerelease
+     * Indicates if a new release created in jira should be set as released
      */
     released?: boolean;
+
     /**
      * Include the release date when creating a release in jira
+     *
+     * @default: false
      */
     setReleaseDate?: boolean;
+
+    /**
+     * Specify board name to be used to find an active sprint.
+     * Use the start date of the active sprint as start date for the release
+     *
+     * @default: undefined
+     */
+    useBoardForActiveSprint?: string;
 }
 ```

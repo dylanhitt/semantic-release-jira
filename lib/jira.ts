@@ -1,8 +1,8 @@
-import { Config, Version3Client } from 'jira.js';
+import { AgileClient, Config, Version3Client } from 'jira.js';
 
 import { PluginConfig, PluginContext } from './types';
 
-export function makeClient(config: PluginConfig, context: PluginContext): Version3Client {
+function getClientOptions(config: PluginConfig, context: PluginContext): Config {
   const clientOptions: Config = {
     host: config.jiraHost,
   };
@@ -38,5 +38,13 @@ export function makeClient(config: PluginConfig, context: PluginContext): Versio
     };
   }
 
-  return new Version3Client(clientOptions);
+  return clientOptions;
+}
+
+export function makeVersion3Client(config: PluginConfig, context: PluginContext): Version3Client {
+  return new Version3Client(getClientOptions(config, context));
+}
+
+export function makeAgileClient(config: PluginConfig, context: PluginContext): AgileClient {
+  return new AgileClient(getClientOptions(config, context));
 }

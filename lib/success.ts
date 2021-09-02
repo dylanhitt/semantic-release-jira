@@ -1,8 +1,10 @@
 import { Version3, Version3Client } from 'jira.js';
+import { Sprint } from 'jira.js/out/agile/models';
+import { CreateVersion } from 'jira.js/out/version3/parameters';
 import * as _ from 'lodash';
 import pLimit from 'p-limit';
 
-import { makeClient } from './jira';
+import { makeAgileClient, makeVersion3Client } from './jira';
 import { DEFAULT_RELEASE_DESCRIPTION_TEMPLATE, DEFAULT_VERSION_TEMPLATE, GenerateNotesContext, PluginConfig } from './types';
 import { escapeRegExp } from './util';
 
@@ -32,7 +34,7 @@ export function getTickets(config: PluginConfig, context: GenerateNotesContext):
   return [...tickets];
 }
 
-async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, project: Version3.Version3Models.Project, name: string, description: string): Promise<Version3.Version3Models.Version> {
+async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, project: Version3.Version3Models.Project, name: string, description: string, activeSprint: Sprint | undefined): Promise<Version3.Version3Models.Version> {
   const remoteVersions = project.versions;
   context.logger.info(`Looking for version with name '${name}'`);
   const existing = _.find(remoteVersions, { name });
@@ -52,10 +54,11 @@ async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesC
     } as any;
   } else {
     const descriptionText = description || '';
-    const parameters = {
+    const parameters: CreateVersion = {
       name,
       projectId: project.id as any,
       description: descriptionText,
+      startDate: activeSprint?.startDate,
       released: Boolean(config.released),
       releaseDate: config.setReleaseDate ? (new Date().toISOString()) : undefined,
     };
@@ -114,16 +117,27 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
 
   context.logger.info(`Using jira release '${newVersionName}'`);
 
-  const jira = makeClient(config, context);
+  const version3Client = makeVersion3Client(config, context);
 
-  const project = await jira.projects.getProject({ projectIdOrKey: config.projectId });
-  const releaseVersion = await findOrCreateVersion(config, context, jira, project, newVersionName, newVersionDescription);
+  let activeSprint: Sprint | undefined;
+  if (config.useBoardForActiveSprint) {
+    const agileClient = makeAgileClient(config, context);
+    const boards = await agileClient.board.getAllBoards({ projectKeyOrId: config.projectId });
+    const board = boards.values.find(b => b.name === config.useBoardForActiveSprint);
+    if (board) {
+      const sprints = await agileClient.board.getAllSprints({ boardId: board.id });
+      activeSprint = sprints.values.find(s => s.state === 'active');
+    }
+  }
+
+  const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId });
+  const releaseVersion = await findOrCreateVersion(config, context, version3Client, project, newVersionName, newVersionDescription, activeSprint);
 
   const concurrentLimit = pLimit(config.networkConcurrency || 10);
 
   const edits = tickets.map(issueKey =>
     concurrentLimit(() =>
-      editIssueFixVersions(config, context, jira, newVersionName, releaseVersion.id, issueKey),
+      editIssueFixVersions(config, context, version3Client, newVersionName, releaseVersion.id, issueKey),
     ),
   );
 
