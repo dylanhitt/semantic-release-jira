@@ -34,7 +34,14 @@ export function getTickets(config: PluginConfig, context: GenerateNotesContext):
   return [...tickets];
 }
 
-async function findOrCreateVersion(config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, project: Version3.Version3Models.Project, name: string, description: string, activeSprint: Sprint | undefined): Promise<Version3.Version3Models.Version> {
+async function findOrCreateVersion(
+    config: PluginConfig,
+    context: GenerateNotesContext,
+    jira: Version3Client,
+    project: Version3.Version3Models.Project,
+    name: string,
+    description: string,
+    activeSprint: Sprint | undefined): Promise<Version3.Version3Models.Version> {
   const remoteVersions = project.versions;
   context.logger.info(`Looking for version with name '${name}'`);
   const existing = _.find(remoteVersions, { name });
