@@ -1,5 +1,5 @@
 {
-  "name": "@boxcee/semantic-release-jira-releases",
+  "name": "@temptek/semantic-release-jira-releases",
   "version": "0.0.1",
   "main": "dist/lib/index.js",
   "repository": "https://github.com/boxcee/semantic-release-jira-releases",
