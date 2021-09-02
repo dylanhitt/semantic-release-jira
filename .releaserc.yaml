@@ -9,5 +9,7 @@ plugins:
   - - '@semantic-release/npm'
     - npmPublish: true
   - '@semantic-release/git'
+    - assets:
+        - CHANGELOG.md
   - - '@semantic-release/github'
     - failComment: false
