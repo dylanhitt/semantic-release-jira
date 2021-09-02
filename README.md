@@ -2,9 +2,9 @@
 
 [**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to publish a jira release.
 
-[![Travis](https://img.shields.io/travis/UpHabit/semantic-release-jira-releases.svg)](https://travis-ci.org/UpHabit/semantic-release-jira-releases)
+![Github](https://github.com/boxcee/semantic-release-jira-releases/actions/workflows/release.yml/badge.svg)
 
-[![npm latest version](https://img.shields.io/npm/v/semantic-release-jira-releases/latest.svg)](https://www.npmjs.com/package/semantic-release-jira-releases)
+[![npm latest version](https://img.shields.io/npm/v/@temptek/semantic-release-jira-releases/latest.svg)](https://www.npmjs.com/package/semantic-release-jira-releases)
 
 | Step               | Description                                                                                                                                   |
 |--------------------|----------------------------------------------------------------------------|
@@ -14,8 +14,8 @@
 ## Install
 
 ```bash
-$ npm install --save-dev semantic-release-jira-releases
-$ yarn add --dev semantic-release-jira-releases
+$ npm install --save-dev @temptek/semantic-release-jira-releases
+$ yarn add --dev @temptek/semantic-release-jira-releases
 ```
 
 ### Environment variables
@@ -41,7 +41,7 @@ The plugin should be added to your config
     "@semantic-release/release-notes-generator",
     "@semantic-release/git",
     [
-      "semantic-release-jira-releases",
+      "@temptek/semantic-release-jira-releases",
       {
         "projectId": "UH",
         "releaseNameTemplate": "Test v${version}",
