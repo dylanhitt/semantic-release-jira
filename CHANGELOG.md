@@ -1,3 +1,17 @@
+## [0.7.4](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.7.3...v0.7.4) (2021-09-02)
+
+
+### Bug Fixes
+
+* First version ([5276152](https://github.com/boxcee/semantic-release-jira-releases/commit/52761521cd5b8ff7f860e20c33b46aa29c563c69))
+* First version ([993ea98](https://github.com/boxcee/semantic-release-jira-releases/commit/993ea98b9499c5484ba1637640fe539de177f2c1))
+* First version ([dd714cf](https://github.com/boxcee/semantic-release-jira-releases/commit/dd714cf64aad42a939bc1bdfc09b9ae85b4816a1))
+
+
+### Reverts
+
+* Revert "chore(release): 0.7.3 [skip ci]" ([304629e](https://github.com/boxcee/semantic-release-jira-releases/commit/304629ea32f43804a2fb540b788eca076346f4e1))
+
 ## [0.7.2](https://github.com/UpHabit/semantic-release-jira-releases/compare/v0.7.1...v0.7.2) (2020-07-21)
 
 
