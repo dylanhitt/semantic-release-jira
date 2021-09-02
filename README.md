@@ -55,9 +55,8 @@ The plugin should be added to your config
     ]
   ]
 }
-
-Please note that `ticketRegex` cannot be used together with `ticketPrefixes`.
 ```
+Please note that `ticketRegex` cannot be used together with `ticketPrefixes`.
 
 ```typescript
 interface Config {
