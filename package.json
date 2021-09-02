@@ -1,8 +1,8 @@
 {
-  "name": "semantic-release-jira",
+  "name": "@boxcee/semantic-release-jira-releases",
   "version": "0.0.1",
   "main": "dist/lib/index.js",
-  "repository": "https://github.com/boxcee/semantic-release-jira",
+  "repository": "https://github.com/boxcee/semantic-release-jira-releases",
   "license": "MIT",
   "private": false,
   "scripts": {
