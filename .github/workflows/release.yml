@@ -50,6 +50,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    needs:
+      - test
 
     steps:
       - name: Checkout
