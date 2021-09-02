@@ -27,7 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install
+      - name: Install Semantic Release
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           npm install -g \
@@ -37,6 +37,10 @@ jobs:
             @semantic-release/git \
             @semantic-release/github \
             @semantic-release/npm
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
 
       - name: Build
         run: npm run build
