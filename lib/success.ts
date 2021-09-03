@@ -112,41 +112,46 @@ async function editIssueFixVersions(config: PluginConfig, context: GenerateNotes
 }
 
 export async function success(config: PluginConfig, context: GenerateNotesContext): Promise<void> {
-  const tickets = getTickets(config, context);
+  const isPrerelease = typeof context.branch !== 'string' && context.branch.prerelease;
+  const runOnPrerelease = config.runOnPrerelease === undefined || config.runOnPrerelease;
 
-  context.logger.info(`Found ticket ${tickets.join(', ')}`);
+  if (!isPrerelease || (isPrerelease && runOnPrerelease)) {
+    const tickets = getTickets(config, context);
 
-  const versionTemplate = _.template(config.releaseNameTemplate ?? DEFAULT_VERSION_TEMPLATE);
-  const newVersionName = versionTemplate({ version: context.nextRelease.version, env: context.env });
+    context.logger.info(`Found ticket ${tickets.join(', ')}`);
 
-  const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE);
-  const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env });
+    const versionTemplate = _.template(config.releaseNameTemplate ?? DEFAULT_VERSION_TEMPLATE);
+    const newVersionName = versionTemplate({ version: context.nextRelease.version, env: context.env });
 
-  context.logger.info(`Using jira release '${newVersionName}'`);
+    const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE);
+    const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env });
 
-  const version3Client = makeVersion3Client(config, context);
+    context.logger.info(`Using jira release '${newVersionName}'`);
 
-  let activeSprint: Sprint | undefined;
-  if (config.useBoardForActiveSprint) {
-    const agileClient = makeAgileClient(config, context);
-    const boards = await agileClient.board.getAllBoards({ projectKeyOrId: config.projectId });
-    const board = boards.values.find(b => b.name === config.useBoardForActiveSprint);
-    if (board) {
-      const sprints = await agileClient.board.getAllSprints({ boardId: board.id });
-      activeSprint = sprints.values.find(s => s.state === 'active');
+    const version3Client = makeVersion3Client(config, context);
+
+    let activeSprint: Sprint | undefined;
+    if (config.useBoardForActiveSprint) {
+      const agileClient = makeAgileClient(config, context);
+      const boards = await agileClient.board.getAllBoards({ projectKeyOrId: config.projectId });
+      const board = boards.values.find(b => b.name === config.useBoardForActiveSprint);
+      if (board) {
+        const sprints = await agileClient.board.getAllSprints({ boardId: board.id });
+        activeSprint = sprints.values.find(s => s.state === 'active');
+      }
     }
+
+    const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId });
+    const releaseVersion = await findOrCreateVersion(config, context, version3Client, project, newVersionName, newVersionDescription, activeSprint);
+
+    const concurrentLimit = pLimit(config.networkConcurrency || 10);
+
+    const edits = tickets.map(issueKey =>
+      concurrentLimit(() =>
+        editIssueFixVersions(config, context, version3Client, newVersionName, releaseVersion.id, issueKey),
+      ),
+    );
+
+    await Promise.all(edits);
   }
-
-  const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId });
-  const releaseVersion = await findOrCreateVersion(config, context, version3Client, project, newVersionName, newVersionDescription, activeSprint);
-
-  const concurrentLimit = pLimit(config.networkConcurrency || 10);
-
-  const edits = tickets.map(issueKey =>
-    concurrentLimit(() =>
-      editIssueFixVersions(config, context, version3Client, newVersionName, releaseVersion.id, issueKey),
-    ),
-  );
-
-  await Promise.all(edits);
 }

@@ -132,4 +132,11 @@ export interface PluginConfig extends BaseConfig {
    * @default: undefined
    */
   useBoardForActiveSprint?: string;
+
+  /**
+   * Run on prerelease branch?
+   *
+   * @default: true
+   */
+  runOnPrerelease?: boolean;
 }
