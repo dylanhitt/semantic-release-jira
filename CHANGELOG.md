@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.2.0...v0.3.0) (2021-09-03)
+
+
+### Features
+
+* add option to not run on prerelease branches ([37fa1fc](https://github.com/boxcee/semantic-release-jira-releases/commit/37fa1fc3194e3ac37186075623696f4fb092d659))
+
 # [0.2.0](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.1.0...v0.2.0) (2021-09-02)
 
 
