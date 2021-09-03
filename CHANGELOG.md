@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.1.0...v0.2.0) (2021-09-02)
+
+
+### Features
+
+* Allow usage of board/active sprint for start date of release ([c728311](https://github.com/boxcee/semantic-release-jira-releases/commit/c7283111ba92a6447fef001772f90069db3b2c3c))
+
 # [0.1.0](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.0.4...v0.1.0) (2021-09-02)
 
 
