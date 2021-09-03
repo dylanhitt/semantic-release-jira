@@ -153,5 +153,8 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
     );
 
     await Promise.all(edits);
+  } else {
+
+    context.logger.info(`Configuration set to not run on prerelease branches`);
   }
 }
