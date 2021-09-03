@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.3.0...v0.3.1) (2021-09-03)
+
+
+### Bug Fixes
+
+* add message when not run in prerelease branch ([ddeefc1](https://github.com/boxcee/semantic-release-jira-releases/commit/ddeefc14ec6d641ee3d1d69c0bd19b3a2737c215))
+
 # [0.3.0](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.2.0...v0.3.0) (2021-09-03)
 
 
