@@ -1,6 +1,6 @@
 import SemanticReleaseError from '@semantic-release/error';
 
-import { makeAgileClient, makeVersion3Client } from './jira';
+import { makeVersion3Client } from './jira';
 import { PluginConfig, PluginContext } from './types';
 
 export async function verifyConditions(config: PluginConfig, context: PluginContext): Promise<void> {
@@ -73,18 +73,4 @@ export async function verifyConditions(config: PluginConfig, context: PluginCont
   const jira = makeVersion3Client(config, context);
 
   await jira.projects.getProject({ projectIdOrKey: config.projectId });
-
-  if (config.useBoardForActiveSprint && typeof config.useBoardForActiveSprint === 'string') {
-    const agileClient = makeAgileClient(config, context);
-    const boards = await agileClient.board.getAllBoards({ projectKeyOrId: config.projectId });
-    const board = boards.values.find(b => b.name === config.useBoardForActiveSprint);
-    if (!board) {
-      throw new SemanticReleaseError(`Board ${config.useBoardForActiveSprint} could not be found`);
-    }
-    const sprints = await agileClient.board.getAllSprints({ boardId: board.id });
-    const sprint = sprints.values.find(s => s.state === 'active');
-    if (!sprint) {
-      throw new SemanticReleaseError(`Board ${config.useBoardForActiveSprint} has no active sprint`);
-    }
-  }
 }

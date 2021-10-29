@@ -138,6 +138,11 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
       if (board) {
         const sprints = await agileClient.board.getAllSprints({ boardId: board.id });
         activeSprint = sprints.values.find(s => s.state === 'active');
+        if (!activeSprint) {
+          context.logger.error(`Board ${config.useBoardForActiveSprint} has no active sprint`);
+        }
+      } else {
+        context.logger.error(`Board ${config.useBoardForActiveSprint} could not be found`);
       }
     }
 
