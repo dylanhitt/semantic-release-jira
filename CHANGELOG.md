@@ -1,3 +1,10 @@
+## [0.3.2](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.3.1...v0.3.2) (2021-10-29)
+
+
+### Bug Fixes
+
+* do not fail when board or sprint not found, log out the error though ([bbcc017](https://github.com/boxcee/semantic-release-jira-releases/commit/bbcc017e4bba8b296d32821ad148069baa51e6a3))
+
 ## [0.3.1](https://github.com/boxcee/semantic-release-jira-releases/compare/v0.3.0...v0.3.1) (2021-09-03)
 
 
