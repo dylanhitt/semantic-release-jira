@@ -101,7 +101,7 @@ interface Config {
      *      notes: The full release notes: This may be very large
      *             Only use it if you have very small releases
      *
-     * @default `Automated release with semantic-release-jira-releases https://git.io/JvAbj`
+     * @default `Automated release with semantic-release-jira https://git.io/JvAbj`
      */
     releaseDescriptionTemplate?: string;
 

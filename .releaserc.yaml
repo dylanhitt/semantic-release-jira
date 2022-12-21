@@ -1,4 +1,4 @@
-repositoryUrl: git@github.com:dylanhitt/semantic-release-jira-releases.git
+repositoryUrl: git@github.com:dylanhitt/semantic-release-jira.git
 branch: master
 dryRun: false
 debug: false
