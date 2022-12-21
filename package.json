@@ -1,5 +1,5 @@
 {
-  "name": "@temptek/semantic-release-jira",
+  "name": "@dylanhitt1/semantic-release-jira",
   "version": "0.3.2",
   "main": "dist/lib/index.js",
   "repository": {
