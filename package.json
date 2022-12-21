@@ -4,7 +4,7 @@
   "main": "dist/lib/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/boxcee/semantic-release-jira.git"
+    "url": "git+https://github.com/dylanhitt/semantic-release-jira.git"
   },
   "publishConfig": {
     "access": "public"
@@ -42,9 +42,9 @@
   },
   "description": "[**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to publish a jira release.",
   "bugs": {
-    "url": "https://github.com/boxcee/semantic-release-jira/issues"
+    "url": "https://github.com/dylanhitt/semantic-release-jira/issues"
   },
-  "homepage": "https://github.com/boxcee/semantic-release-jira#readme",
+  "homepage": "https://github.com/dylanhitt/semantic-release-jira#readme",
   "directories": {
     "lib": "lib",
     "test": "test"

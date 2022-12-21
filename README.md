@@ -2,7 +2,7 @@
 
 [**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to publish a jira release.
 
-![Github](https://github.com/boxcee/semantic-release-jira/actions/workflows/release.yml/badge.svg)
+![Github](https://github.com/dylanhitt/semantic-release-jira/actions/workflows/release.yml/badge.svg)
 
 [![npm latest version](https://img.shields.io/npm/v/@temptek/semantic-release-jira/latest.svg)](https://www.npmjs.com/package/@temptek/semantic-release-jira)
 
