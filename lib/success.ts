@@ -61,17 +61,15 @@ async function findOrCreateVersion(
     } as any;
   } else {
     const descriptionText = description || '';
+    const released = typeof context.branch !== 'string' ? !context.branch.prerelease : false;
     const parameters: CreateVersion = {
       name,
       projectId: project.id as any,
       description: descriptionText,
       startDate: activeSprint?.startDate,
-      released: Boolean(config.released),
+      released: Boolean(config.released ?? released),
       releaseDate: config.setReleaseDate ? (new Date().toISOString()) : undefined,
     };
-    if (!parameters.released && typeof context.branch !== 'string') {
-      parameters.released = !context.branch.prerelease;
-    }
     newVersion = await jira.projectVersions.createVersion(parameters);
   }
 
