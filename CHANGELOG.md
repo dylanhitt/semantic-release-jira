@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/dylanhitt/semantic-release-jira/compare/v1.0.0...v1.1.0) (2023-04-28)
+
+
+### Features
+
+* let the user overwrite the released value ([6bcc749](https://github.com/dylanhitt/semantic-release-jira/commit/6bcc7498f7bb6178916a9a35091a63da95b5e7f2))
+
 # 1.0.0 (2022-12-21)
 
 
