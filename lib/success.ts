@@ -120,7 +120,6 @@ async function findActiveSprint(config: PluginConfig, context: GenerateNotesCont
       activeSprint = sprints.values.find(s => s.state === 'active');
       if (!activeSprint) {
         context.logger.error(`Board ${config.useBoardForActiveSprint} has no active sprint`);
-
       } else {
         context.logger.error(`Board ${config.useBoardForActiveSprint} could not be found`);
       }
