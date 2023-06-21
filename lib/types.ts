@@ -88,11 +88,12 @@ export interface PluginConfig extends BaseConfig {
   /**
    * A lodash template with a single `version` variable
    * defaults to `v${version}` which results in a version that is named like `v1.0.0`
+   * accepts a single template string or an array of template strings
    * ex: `Semantic Release v${version}` results in `Semantic Release v1.0.0`
    *
    * @default `v${version}`
    */
-  releaseNameTemplate?: string;
+  releaseNameTemplate?: string | string[];
 
   /**
    * A lodash template for the release.description field

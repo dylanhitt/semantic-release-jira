@@ -15,7 +15,7 @@ export function getTickets(config: PluginConfig, context: GenerateNotesContext):
     patterns = [new RegExp(config.ticketRegex, 'giu')];
   } else {
     patterns = config.ticketPrefixes!
-        .map(prefix => new RegExp(`\\b${escapeRegExp(prefix)}-(\\d+)\\b`, 'giu'));
+      .map(prefix => new RegExp(`\\b${escapeRegExp(prefix)}-(\\d+)\\b`, 'giu'));
   }
 
   const tickets = new Set<string>();
@@ -35,13 +35,13 @@ export function getTickets(config: PluginConfig, context: GenerateNotesContext):
 }
 
 async function findOrCreateVersion(
-    config: PluginConfig,
-    context: GenerateNotesContext,
-    jira: Version3Client,
-    project: Version3.Version3Models.Project,
-    name: string,
-    description: string,
-    activeSprint: Sprint | undefined): Promise<Version3.Version3Models.Version> {
+  config: PluginConfig,
+  context: GenerateNotesContext,
+  jira: Version3Client,
+  project: Version3.Version3Models.Project,
+  name: string,
+  description: string,
+  activeSprint: Sprint | undefined): Promise<Version3.Version3Models.Version> {
   const remoteVersions = project.versions;
   context.logger.info(`Looking for version with name '${name}'`);
   const existing = _.find(remoteVersions, { name });
@@ -77,16 +77,16 @@ async function findOrCreateVersion(
   return newVersion;
 }
 
-async function editIssueFixVersions(config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, newVersionName: string, releaseVersionId: string | undefined, issueKey: string): Promise<void> {
+async function editIssueFixVersions(config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, newVersionNames: string[], releaseVersionIds: (string | undefined)[], issueKey: string): Promise<void> {
   try {
-    context.logger.info(`Adding issue ${issueKey} to '${newVersionName}'`);
+    context.logger.info(`Adding issue ${issueKey} to '${newVersionNames}'`);
     if (!config.dryRun) {
       await jira.issues.editIssue({
         issueIdOrKey: issueKey,
         update: {
-          fixVersions: [{
-            add: { id: releaseVersionId },
-          }],
+          fixVersions: releaseVersionIds.map(id => {
+            return { add: { id } };
+          }),
         },
         properties: undefined as any,
       });
@@ -99,7 +99,7 @@ async function editIssueFixVersions(config: PluginConfig, context: GenerateNotes
         err = JSON.parse(err);
         statusCode = statusCode || err.statusCode;
       } catch (err) {
-          // it's not json :shrug:
+        // it's not json :shrug:
       }
     }
     if (allowedStatusCodes.indexOf(statusCode) === -1) {
@@ -118,13 +118,26 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
 
     context.logger.info(`Found ticket ${tickets.join(', ')}`);
 
-    const versionTemplate = _.template(config.releaseNameTemplate ?? DEFAULT_VERSION_TEMPLATE);
-    const newVersionName = versionTemplate({ version: context.nextRelease.version, env: context.env });
+    const templates = config.releaseNameTemplate == null ? [DEFAULT_VERSION_TEMPLATE] : (Array.isArray(config.releaseNameTemplate) ? config.releaseNameTemplate : [config.releaseNameTemplate]);
+    const versionNames = templates.map(template => {
+      // Parse the version into its components
+      const [version, channel] = context.nextRelease.version.split('-');
+      const [major, minor, patch] = version.split('.').map(Number);
+
+      return _.template(template)({
+        version: context.nextRelease.version,
+        env: context.env,
+        major,
+        minor,
+        patch,
+        channel: channel || '', // channel may not exist, so default it to null
+      });
+    });
 
     const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE);
     const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env });
 
-    context.logger.info(`Using jira release '${newVersionName}'`);
+    context.logger.info(`Using jira release(s) '${versionNames}'`);
 
     const version3Client = makeVersion3Client(config, context);
 
@@ -145,13 +158,16 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
     }
 
     const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId });
-    const releaseVersion = await findOrCreateVersion(config, context, version3Client, project, newVersionName, newVersionDescription, activeSprint);
+    const releaseVersionsPromises = versionNames.map((version: string) => {
+      return findOrCreateVersion(config, context, version3Client, project, version, newVersionDescription, activeSprint);
+    });
+    const releaseIds = (await Promise.all(releaseVersionsPromises)).map(version => version.id);
 
     const concurrentLimit = pLimit(config.networkConcurrency || 10);
 
     const edits = tickets.map(issueKey =>
       concurrentLimit(() =>
-        editIssueFixVersions(config, context, version3Client, newVersionName, releaseVersion.id, issueKey),
+        editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey),
       ),
     );
 
