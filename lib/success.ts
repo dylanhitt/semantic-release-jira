@@ -151,36 +151,36 @@ export async function success(config: PluginConfig, context: GenerateNotesContex
   const runOnPrerelease = config.runOnPrerelease === undefined || config.runOnPrerelease;
 
   if (!isPrerelease || (isPrerelease && runOnPrerelease)) {
-      const tickets = getTickets(config, context);
+    const tickets = getTickets(config, context);
 
-      context.logger.info(`Found ticket ${tickets.join(', ')}`);
+    context.logger.info(`Found ticket ${tickets.join(', ')}`);
 
-      const versionNames = getVersionNames(config, context);
+    const versionNames = getVersionNames(config, context);
 
-      const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE);
-      const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env });
+    const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE);
+    const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env });
 
-      context.logger.info(`Using jira release(s) '${versionNames}'`);
+    context.logger.info(`Using jira release(s) '${versionNames}'`);
 
-      const version3Client = makeVersion3Client(config, context);
-      const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId });
+    const version3Client = makeVersion3Client(config, context);
+    const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId });
 
-      const activeSprint = await findActiveSprint(config, context);
+    const activeSprint = await findActiveSprint(config, context);
 
-      const concurrentLimit = pLimit(config.networkConcurrency || 10);
+    const concurrentLimit = pLimit(config.networkConcurrency || 10);
 
-      const releaseVersionsPromises = versionNames.map((version: string) => {
-        return concurrentLimit(() => findOrCreateVersion(config, context, version3Client, project, version, newVersionDescription, activeSprint));
-      });
-      const releaseVersions = await Promise.all(releaseVersionsPromises);
-      const releaseIds = releaseVersions.map(version => version.id);
+    const releaseVersionsPromises = versionNames.map((version: string) => {
+      return concurrentLimit(() => findOrCreateVersion(config, context, version3Client, project, version, newVersionDescription, activeSprint));
+    });
+    const releaseVersions = await Promise.all(releaseVersionsPromises);
+    const releaseIds = releaseVersions.map(version => version.id);
 
-      const edits = tickets.map(issueKey =>
-        concurrentLimit(() => editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey)),
-      );
-      await Promise.all(edits);
-    } else {
+    const edits = tickets.map(issueKey =>
+      concurrentLimit(() => editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey)),
+    );
+    await Promise.all(edits);
+  } else {
 
-      context.logger.info(`Configuration set to not run on prerelease branches`);
-    }
+    context.logger.info(`Configuration set to not run on prerelease branches`);
+  }
 }
