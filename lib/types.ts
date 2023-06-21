@@ -89,14 +89,14 @@ export interface PluginConfig extends BaseConfig {
    * A lodash template with a single `version` variable
    * defaults to `v${version}` which results in a version that is named like `v1.0.0`
    * accepts a single template string or an array of template strings
-   * 
+   *
    * template variables:
    *    version: the sem-ver version ex.: 1.2.3
    *      major: the 1st segment of the semver
    *      minor: the 2nd segment of the semver
    *      patch: the 3rd segment of the semver
    *    channel: the optional "channel" semantic-release might add ex 1.2.3-prerelease.1 would have a channel of prerelease.1
-   * 
+   *
    * ex: `Semantic Release v${version}` results in `Semantic Release v1.0.0`
    *
    * @default `v${version}`
