@@ -124,7 +124,6 @@ async function findActiveSprint(config: PluginConfig, context: GenerateNotesCont
         context.logger.error(`Board ${config.useBoardForActiveSprint} could not be found`);
       }
     }
-
   }
   return activeSprint;
 }
