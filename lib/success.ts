@@ -183,8 +183,9 @@ export async function success (config: PluginConfig, context: GenerateNotesConte
     const releaseVersions = await Promise.all(releaseVersionsPromises)
     const releaseIds = releaseVersions.map(version => version.id)
 
-    const edits = tickets.map(async issueKey => { await concurrentLimit(async () => { await editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey) }) }
-    )
+    const edits = tickets.map(async issueKey => {
+      await concurrentLimit(async () => { await editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey) })
+    })
     await Promise.all(edits)
   } else {
     context.logger.info('Configuration set to not run on prerelease branches')
