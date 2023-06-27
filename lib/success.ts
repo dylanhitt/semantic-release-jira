@@ -12,11 +12,14 @@ import { escapeRegExp } from './util'
 export function getTickets (config: PluginConfig, context: GenerateNotesContext): string[] {
   let patterns: RegExp[] = []
 
-  if (config.ticketRegex != undefined) {
+  if (config.ticketRegex != null) {
     patterns = [new RegExp(config.ticketRegex, 'giu')]
-  } else {
-    patterns = config.ticketPrefixes!
+  } else if (config.ticketPrefixes != null) {
+    patterns = config.ticketPrefixes
       .map(prefix => new RegExp(`\\b${escapeRegExp(prefix)}-(\\d+)\\b`, 'giu'))
+  } else {
+    context.logger.error('No config.ticketRegex or config.ticketPrefixes were provided, failed to find any tickets.')
+    return []
   }
 
   const tickets = new Set<string>()
@@ -26,7 +29,7 @@ export function getTickets (config: PluginConfig, context: GenerateNotesContext)
       if (matches != null) {
         matches.forEach(match => {
           tickets.add(match)
-          context.logger.info(`Found ticket ${matches} in commit: ${commit.commit.short}`)
+          context.logger.info(`Found ticket ${matches.toString()} in commit: ${commit.commit.short}`)
         })
       }
     }
@@ -42,11 +45,12 @@ async function findOrCreateVersion (
   project: Version3.Version3Models.Project,
   name: string,
   description: string,
-  activeSprint: Sprint | undefined): Promise<Version3.Version3Models.Version> {
+  activeSprint: Sprint | undefined
+): Promise<Version3.Version3Models.Version> {
   const remoteVersions = project.versions
   context.logger.info(`Looking for version with name '${name}'`)
   const existing = _.find(remoteVersions, { name })
-  if (existing != null) {
+  if (existing?.id != null) {
     context.logger.info(`Found existing release '${existing.id}'`)
     return existing
   }
@@ -61,17 +65,21 @@ async function findOrCreateVersion (
       id: 'dry_run_id'
     } as any
   } else {
-    const descriptionText = description || ''
-    const released = typeof context.branch !== 'string' ? !context.branch.prerelease : false
+    const released = typeof context.branch !== 'string' && !(typeof context.branch.prerelease === 'boolean' ? context.branch.prerelease : context.branch.prerelease !== undefined)
     const parameters: CreateVersion = {
       name,
+      description,
       projectId: project.id as any,
-      description: descriptionText,
       startDate: activeSprint?.startDate,
       released: Boolean(config.released ?? released),
-      releaseDate: config.setReleaseDate ? (new Date().toISOString()) : undefined
+      releaseDate: (config.setReleaseDate ?? false) ? new Date().toISOString() : undefined
     }
     newVersion = await jira.projectVersions.createVersion(parameters)
+  }
+
+  if (newVersion.id == null) {
+    context.logger.error('Failed to create new version (couldn\'t find ID of new version)')
+    return newVersion
   }
 
   context.logger.info(`Made new release '${newVersion.id}'`)
@@ -80,7 +88,7 @@ async function findOrCreateVersion (
 
 async function editIssueFixVersions (config: PluginConfig, context: GenerateNotesContext, jira: Version3Client, newVersionNames: string[], releaseVersionIds: Array<string | undefined>, issueKey: string): Promise<void> {
   try {
-    context.logger.info(`Adding issue ${issueKey} to '${newVersionNames}'`)
+    context.logger.info(`Adding issue ${issueKey} to '${newVersionNames.toString()}'`)
     if (!config.dryRun) {
       await jira.issues.editIssue({
         issueIdOrKey: issueKey,
@@ -94,11 +102,11 @@ async function editIssueFixVersions (config: PluginConfig, context: GenerateNote
     }
   } catch (err: any) {
     const allowedStatusCodes = [400, 404]
-    let { statusCode } = err
+    let { statusCode }: { statusCode: number } = err
     if (typeof err === 'string') {
       try {
-        err = JSON.parse(err)
-        statusCode = statusCode || err.statusCode
+        const parsedErr = JSON.parse(err)
+        statusCode = parsedErr.statusCode
       } catch (err) {
         // it's not json :shrug:
       }
@@ -110,23 +118,22 @@ async function editIssueFixVersions (config: PluginConfig, context: GenerateNote
   }
 }
 
-async function findActiveSprint (config: PluginConfig, context: GenerateNotesContext) {
-  let activeSprint: Sprint | undefined
-  if (config.useBoardForActiveSprint) {
-    const agileClient = makeAgileClient(config, context)
-    const boards = await agileClient.board.getAllBoards({ projectKeyOrId: config.projectId })
-    const board = boards.values.find(b => b.name === config.useBoardForActiveSprint)
-    if (board != null) {
-      const sprints = await agileClient.board.getAllSprints({ boardId: board.id })
-      activeSprint = sprints.values.find(s => s.state === 'active')
-      if (activeSprint == null) {
-        context.logger.error(`Board ${config.useBoardForActiveSprint} has no active sprint`)
-      } else {
-        context.logger.error(`Board ${config.useBoardForActiveSprint} could not be found`)
-      }
-    }
+async function findActiveSprint (config: PluginConfig, context: GenerateNotesContext): Promise<Sprint | undefined> {
+  if (config.useBoardForActiveSprint == null) {
+    return undefined
   }
-  return activeSprint
+
+  const agileClient = makeAgileClient(config, context)
+  const boards = await agileClient.board.getAllBoards({ projectKeyOrId: config.projectId })
+  const board = boards.values.find(b => b.name === config.useBoardForActiveSprint)
+  if (board != null) {
+    const sprints = await agileClient.board.getAllSprints({ boardId: board.id })
+    const activeSprint = sprints.values.find(s => s.state === 'active')
+    return activeSprint
+  }
+
+  context.logger.error(`Board ${config.useBoardForActiveSprint} has no active sprint`)
+  return undefined
 }
 
 function getVersionNames (config: PluginConfig, context: GenerateNotesContext): string[] {
@@ -142,13 +149,14 @@ function getVersionNames (config: PluginConfig, context: GenerateNotesContext): 
       major,
       minor,
       patch,
-      channel: channel || '' // channel may not exist, so default it to null
+      channel
     })
   })
 }
 
 export async function success (config: PluginConfig, context: GenerateNotesContext): Promise<void> {
-  const isPrerelease = typeof context.branch !== 'string' && context.branch.prerelease
+  // const isPrerelease = typeof context.branch !== 'string' && context.branch.prerelease
+  const isPrerelease = typeof context.branch !== 'string' && (typeof context.branch.prerelease === 'boolean' ? context.branch.prerelease : context.branch.prerelease !== undefined)
   const runOnPrerelease = config.runOnPrerelease === undefined || config.runOnPrerelease
 
   if (!isPrerelease || (isPrerelease && runOnPrerelease)) {
@@ -161,14 +169,14 @@ export async function success (config: PluginConfig, context: GenerateNotesConte
     const descriptionTemplate = _.template(config.releaseDescriptionTemplate ?? DEFAULT_RELEASE_DESCRIPTION_TEMPLATE)
     const newVersionDescription = descriptionTemplate({ version: context.nextRelease.version, notes: context.nextRelease.notes, env: context.env })
 
-    context.logger.info(`Using jira release(s) '${versionNames}'`)
+    context.logger.info(`Using jira release(s) '${versionNames.toString()}'`)
 
     const version3Client = makeVersion3Client(config, context)
     const project = await version3Client.projects.getProject({ projectIdOrKey: config.projectId })
 
     const activeSprint = await findActiveSprint(config, context)
 
-    const concurrentLimit = pLimit(config.networkConcurrency || 10)
+    const concurrentLimit = pLimit(config.networkConcurrency ?? 10)
 
     const releaseVersionsPromises = versionNames.map(async (version: string) => {
       return await concurrentLimit(async () => await findOrCreateVersion(config, context, version3Client, project, version, newVersionDescription, activeSprint))
@@ -176,8 +184,7 @@ export async function success (config: PluginConfig, context: GenerateNotesConte
     const releaseVersions = await Promise.all(releaseVersionsPromises)
     const releaseIds = releaseVersions.map(version => version.id)
 
-    const edits = tickets.map(async issueKey =>
-      await concurrentLimit(async () => await editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey))
+    const edits = tickets.map(async issueKey => { await concurrentLimit(async () => { await editIssueFixVersions(config, context, version3Client, versionNames, releaseIds, issueKey) }) }
     )
     await Promise.all(edits)
   } else {
