@@ -65,13 +65,13 @@ async function findOrCreateVersion (
       id: 'dry_run_id'
     } as any
   } else {
-    const released = typeof context.branch !== 'string' && !(typeof context.branch.prerelease === 'boolean' ? context.branch.prerelease : context.branch.prerelease !== undefined)
+    const preRelease = typeof context.branch !== 'string' && Boolean(context.branch.prerelease)
     const parameters: CreateVersion = {
       name,
       description,
       projectId: project.id as any,
       startDate: activeSprint?.startDate,
-      released: Boolean(config.released ?? released),
+      released: config.released ?? !preRelease,
       releaseDate: (config.setReleaseDate ?? false) ? new Date().toISOString() : undefined
     }
     newVersion = await jira.projectVersions.createVersion(parameters)
@@ -155,8 +155,7 @@ function getVersionNames (config: PluginConfig, context: GenerateNotesContext): 
 }
 
 export async function success (config: PluginConfig, context: GenerateNotesContext): Promise<void> {
-  // const isPrerelease = typeof context.branch !== 'string' && context.branch.prerelease
-  const isPrerelease = typeof context.branch !== 'string' && (typeof context.branch.prerelease === 'boolean' ? context.branch.prerelease : context.branch.prerelease !== undefined)
+  const isPrerelease = typeof context.branch !== 'string' && Boolean(context.branch.prerelease)
   const runOnPrerelease = config.runOnPrerelease === undefined || config.runOnPrerelease
 
   if (!isPrerelease || (isPrerelease && runOnPrerelease)) {
