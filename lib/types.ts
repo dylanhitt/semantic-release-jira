@@ -1,89 +1,88 @@
-import { BranchSpec } from 'semantic-release';
-import { Signale } from 'signale';
+import type { BranchSpec } from 'semantic-release'
+import type { Signale } from 'signale'
 
 export interface PluginContext {
-  cwd: string;
-  env: {
-    [k: string]: string;
-  };
-  logger: Signale;
-  options: BaseConfig;
-  stderr: typeof process.stderr;
-  stdout: typeof process.stdout;
-  branch: BranchSpec;
+  cwd: string
+  env: Record<string, string>
+  logger: Signale
+  options: BaseConfig
+  stderr: typeof process.stderr
+  stdout: typeof process.stdout
+  branch: BranchSpec
 }
 
 export interface Person {
-  name: string;
-  email: string;
-  date: Date;
+  name: string
+  email: string
+  date: Date
 }
 
 export interface Commit {
-  author: Person;
-  committer: Person;
-  commitDate: Date;
-  body: string;
-  hash: string;
-  message: string;
-  subject: string;
+  author: Person
+  committer: Person
+  commitDate: Date
+  body: string
+  hash: string
+  message: string
+  subject: string
   commit: {
-    long: string;
-    short: string;
-  };
+    long: string
+    short: string
+  }
 }
 
 export interface PreviousRelease {
-  gitHead: string;
-  gitTag: string;
-  version: string;
+  gitHead: string
+  gitTag: string
+  version: string
 }
 
 export interface UpcomingRelease extends PreviousRelease {
-  notes: string;
-  type: string;
+  notes: string
+  type: string
 }
 
 export interface GenerateNotesContext extends PluginContext {
-  commits: Commit[];
-  lastRelease: PreviousRelease;
-  nextRelease: UpcomingRelease;
+  commits: Commit[]
+  lastRelease: PreviousRelease
+  nextRelease: UpcomingRelease
 }
 
 export interface BaseConfig {
-  $0: string;
-  branch: string;
-  debug: boolean;
-  dryRun: boolean;
+  $0: string
+  branch: string
+  debug: boolean
+  dryRun: boolean
 }
 
-export const DEFAULT_VERSION_TEMPLATE = 'v${version}';
-export const DEFAULT_RELEASE_DESCRIPTION_TEMPLATE = 'Automated release with semantic-release-jira-releases https://git.io/JvAbj';
+// eslint-disable-next-line no-template-curly-in-string
+export const DEFAULT_VERSION_TEMPLATE = 'v${version}'
+export const DEFAULT_RELEASE_DESCRIPTION_TEMPLATE = 'Automated release with semantic-release-jira-releases https://git.io/JvAbj'
 
 export interface PluginConfig extends BaseConfig {
   /**
    * A domain of a jira instance ie: `uphabit.atlasian.net`
    */
-  jiraHost: string;
+  jiraHost: string
 
   /**
    * A list of prefixes to match when looking for tickets in commits. Cannot be used together with ticketRegex.
    *
    * ie. ['TEST'] would match `TEST-123` and `TEST-456`
    */
-  ticketPrefixes?: string[];
+  ticketPrefixes?: string[]
 
   /**
    * A unescaped regex to match tickets in commits (without slashes). Cannot be used together with ticketPrefixes.
    *
    * ie. [a-zA-Z]{4}-\d{3,5} would match any ticket with 3 letters a dash and 3 to 5 numbers, such as `TEST-456`, `TEST-5643` and `TEST-56432`
    */
-  ticketRegex?: string;
+  ticketRegex?: string
 
   /**
    * The id or key for the project releases will be created in
    */
-  projectId: string;
+  projectId: string
 
   /**
    * A lodash template with a single `version` variable
@@ -101,7 +100,7 @@ export interface PluginConfig extends BaseConfig {
    *
    * @default `v${version}`
    */
-  releaseNameTemplate?: string | string[];
+  releaseNameTemplate?: string | string[]
 
   /**
    * A lodash template for the release.description field
@@ -113,26 +112,26 @@ export interface PluginConfig extends BaseConfig {
    *
    * @default `Automated release with semantic-release-jira-releases https://git.io/JvAbj`
    */
-  releaseDescriptionTemplate?: string;
+  releaseDescriptionTemplate?: string
 
   /**
    * The number of maximum parallel network calls
    *
    * @default: 10
    */
-  networkConcurrency?: number;
+  networkConcurrency?: number
 
   /**
    * Indicates if a new release created in jira should be set as released
    */
-  released?: boolean;
+  released?: boolean
 
   /**
    * Include the release date when creating a release in jira
    *
    * @default: false
    */
-  setReleaseDate?: boolean;
+  setReleaseDate?: boolean
 
   /**
    * Specify board name to be used to find an active sprint.
@@ -140,12 +139,12 @@ export interface PluginConfig extends BaseConfig {
    *
    * @default: undefined
    */
-  useBoardForActiveSprint?: string;
+  useBoardForActiveSprint?: string
 
   /**
    * Run on prerelease branch?
    *
    * @default: true
    */
-  runOnPrerelease?: boolean;
+  runOnPrerelease?: boolean
 }
