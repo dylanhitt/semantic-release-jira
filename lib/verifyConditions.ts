@@ -38,7 +38,7 @@ export async function verifyConditions (config: PluginConfig, context: PluginCon
   }
 
   if (config.releaseNameTemplate != null) {
-    if (typeof config.releaseNameTemplate !== 'string' || Array.isArray(config.releaseNameTemplate)) {
+    if (typeof config.releaseNameTemplate !== 'string' && !Array.isArray(config.releaseNameTemplate)) {
       throw new SemanticReleaseError('config.releaseNameTemplate must be a string or a list of strings')
     }
   }
