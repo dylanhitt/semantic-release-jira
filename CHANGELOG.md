@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/dylanhitt/semantic-release-jira/compare/v1.2.0...v1.2.1) (2023-06-30)
+
+
+### Bug Fixes
+
+* verifyConditions was written by an idiot ([#7](https://github.com/dylanhitt/semantic-release-jira/issues/7)) ([ec4cb0a](https://github.com/dylanhitt/semantic-release-jira/commit/ec4cb0aef940ca27948a0c4e8b085bd1aed201d9))
+
 # [1.2.0](https://github.com/dylanhitt/semantic-release-jira/compare/v1.1.0...v1.2.0) (2023-06-28)
 
 
